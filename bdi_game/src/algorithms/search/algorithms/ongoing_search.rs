@@ -51,8 +51,8 @@ impl<'a, P: Searchable> OngoingSearch<'a, P>
 
     pub fn relax_neighbours(&mut self, state: &'a P::State,
                             heuristic_function: &impl Fn(&P::State) -> P::Cost) {
-        let neighbours = self.problem.get_neighbors(&state);
-        let current_cost_info = self.get_node_distance(&state)
+        let neighbours = self.problem.get_neighbors(state);
+        let current_cost_info = self.get_node_distance(state)
             .expect("State not found in distances");
 
         let current_cost = current_cost_info.cost;
@@ -72,16 +72,16 @@ impl<'a, P: Searchable> OngoingSearch<'a, P>
                 cost: new_cost,
             };
 
-            if let Some(current_neighbour_cost) = self.get_node_distance(&neighbour) {
+            if let Some(current_neighbour_cost) = self.get_node_distance(neighbour) {
                 if new_cost < current_neighbour_cost.cost {
-                    self.distances.insert(&neighbour, new_cost_info);
+                    self.distances.insert(neighbour, new_cost_info);
                 }
             } else {
-                self.distances.insert(&neighbour, new_cost_info);
+                self.distances.insert(neighbour, new_cost_info);
             }
             
-            let priority = new_cost + heuristic_function(&neighbour);
-            self.priority_queue.push(&neighbour, priority);
+            let priority = new_cost + heuristic_function(neighbour);
+            self.priority_queue.push(neighbour, priority);
         }
     }
 
@@ -93,12 +93,12 @@ impl<'a, P: Searchable> OngoingSearch<'a, P>
         loop {
             let next_state_maybe = self.priority_queue.pop();
 
-            return if let Some((&ref state, _)) = next_state_maybe {
+            return if let Some((state, _)) = next_state_maybe {
                 if self.was_visited.contains(&state) {
                     continue;
                 }
 
-                self.was_visited.insert(&state);
+                self.was_visited.insert(state);
                 Some(state)
             } else {
                 None
@@ -115,11 +115,11 @@ impl<'a, P: Searchable> OngoingSearch<'a, P>
         let mut current_state = state;
         let mut cost = self.problem.get_zero_cost();
 
-        if !self.was_state_visited(&current_state) {
+        if !self.was_state_visited(current_state) {
             return None;
         }
 
-        while let Some(&ref distance_info) = self.get_node_distance(&current_state) {
+        while let Some(distance_info) = self.get_node_distance(current_state) {
             path.push(current_state.clone());
             cost += distance_info.cost;
             if let Some(previous_state) = &distance_info.previous {

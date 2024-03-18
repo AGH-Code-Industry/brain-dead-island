@@ -6,5 +6,5 @@ pub fn solve_problem<'a, P>(problem: &mut P, search_settings: &SearchSettings<P>
     where
         P: Searchable + LowerBoundable + 'a
 {
-    SearchSolution::new(problem, search_settings, &|state| problem.lower_bound(state))
+    SearchSolution::new(problem, search_settings)
 }

@@ -4,6 +4,7 @@ use crate::algorithms::search::lower_boundable::LowerBoundable;
 
 pub struct SearchSettings<T: Searchable> {
     pub max_cost: T::Cost,
+    pub use_max_cost: bool,
 }
 
 pub enum SearchSolution<P: Searchable> {
@@ -15,6 +16,9 @@ impl<P> SearchSolution<P>
     where
         P: Searchable + LowerBoundable
 {
+    /*
+    * If you don't want to use the heuristic function, you can use the NaiveSearchProblem struct
+     */
     pub fn new(problem: &mut P, search_settings: &SearchSettings<P>) -> SearchSolution<P> {
         let mut ongoing_search = OngoingSearch::new(problem);
 
@@ -29,7 +33,8 @@ impl<P> SearchSolution<P>
                     };
                 }
                 
-                if ongoing_search.get_node_distance(state).map(|x| x.cost)
+                if search_settings.use_max_cost &&
+                    ongoing_search.get_node_distance(state).map(|x| x.cost)
                     .unwrap_or(problem.get_zero_cost()) > search_settings.max_cost {
                     return SearchSolution::NotFound;
                 }

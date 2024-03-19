@@ -15,12 +15,12 @@ pub struct Cluster{
 impl Cluster{
 
     /// Adds unit to the cluster.
-    pub fn add(unit : Unit){
+    pub fn add(&mut self, unit : Unit){
 
     }
 
     /// Adds units to the cluster.
-    pub fn bulk_add(units : &[Unit]){
+    pub fn bulk_add(&mut self, units : &[Unit]){
 
     }
 

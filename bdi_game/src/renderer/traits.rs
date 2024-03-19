@@ -1,24 +1,28 @@
+use super::structures::Cluster;
+
 /// Initializes video submodules, create window, handle canvas.
-pub trait Render{
+/// Moves all data to the Renderer and destroys itself.
+// we can't make RenderBuilder and Render backend agnostic.
+pub trait RenderBuilder<T : Render>{
 
     /// Creates Renderer.
-    /// Also creates window.
     fn new() -> Self;
 
-}
+    /// Sets window arguments.
+    fn window(self, name : String, width : u32, heigth : u32) -> Self;
 
-/// Groups objects to be rendered. 
-pub trait Cluster{
-
-    /// Adds units to the cluster.
-    fn add();
-    /// Renders whole cluser.
-    fn render();
+    /// Builds window
+    fn build(self) -> T;
 
 }
 
-/// Describes properties of the rendered object.
-pub trait Unit{
-    fn new();
+pub trait Render{
+    
+    /// Creates cluster.
+    fn create_cluster(&self) -> Cluster;
+
+    /// Renders cluster.
+    // moved here to keep Cluster backend agnostic.
+    fn render(cluser : Cluster);
 
 }

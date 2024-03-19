@@ -1,5 +1,5 @@
 pub mod display;
-pub mod renderer;
+pub mod render;
 pub mod game;
 mod input;
 mod simulation;

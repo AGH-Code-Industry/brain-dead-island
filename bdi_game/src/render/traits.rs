@@ -9,7 +9,7 @@ pub trait RenderBuilder<T : Render>{
     fn new() -> Self;
 
     /// Sets window arguments.
-    fn window(self, name : String, width : u32, heigth : u32) -> Self;
+    fn window(self, name : &str, width : u32, heigth : u32) -> Self;
 
     /// Builds window
     fn build(self) -> T;
@@ -23,6 +23,6 @@ pub trait Render{
 
     /// Renders cluster.
     // moved here to keep Cluster backend agnostic.
-    fn render(cluser : Cluster);
+    fn render(&mut self, cluser : &Cluster);
 
 }

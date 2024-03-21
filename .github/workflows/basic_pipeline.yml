@@ -1,35 +1,29 @@
 name: Rust
 
-#on: [push, pull_request]
-
-on:
-  push:
-    branches:
-      - master
-      - pipeline
-  pull_request:
-    branches:
-      - master
+on: [push, pull_request]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build_and_test:
+  build:
     runs-on: ubuntu-latest
-    name: Install & Cache sdl2
+    name: Build
     steps:
-      - uses: actions/checkout@v4
-      - uses: awalsh128/cache-apt-pkgs-action@latest
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cache apt
+        uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libsdl2-gfx-dev gcc
 
-      - name: Build
+      - name: rust-toolchain
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Build
         run: cargo build
 
       - name: Test
-        uses: dtolnay/rust-toolchain@stable
         run: cargo test --all-features
   fmt:
     name: Rustfmt

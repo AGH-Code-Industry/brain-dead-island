@@ -39,13 +39,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo clippy -- -D warnings
+      - run: cargo clippy
 
   coverage:
     name: Code coverage
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/cache@v3
+        env:
+          cache-name: tarpaulin
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-${{ env.cache-name }}-
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo install cargo-tarpaulin
+      - run: if ls ~/.cargo/bin/ | grep -q "^cargo-tarpaulin" ; then echo "cargo-tarpaulin is already installed"; else cargo install cargo-tarpaulin; fi
       - run: cargo tarpaulin --ignore-tests

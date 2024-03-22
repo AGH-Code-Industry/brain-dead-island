@@ -1,9 +1,9 @@
 //! Rendering pipeline for bdi.
 
-/// Rendering pipeline traits.
-pub mod traits;
+/// SDL2 implentation of the rendering pipeline.
+pub mod sdl;
 /// Rendering pipeline structures.
 /// Implementation agnostic.
 pub mod structures;
-/// SDL2 implentation of the rendering pipeline.
-pub mod sdl;
+/// Rendering pipeline traits.
+pub mod traits;

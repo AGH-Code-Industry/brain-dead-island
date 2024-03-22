@@ -2,7 +2,7 @@
 pub struct Cluster<T>{
 
     // list of objects inside cluster.
-    objects : Vec<T>,
+    pub objects : Vec<T>,
 
 }
 
@@ -11,6 +11,8 @@ impl <T>Cluster<T>{
 
     /// Adds unit to the cluster.
     pub fn add(&mut self, unit : T){
+
+        self.objects.push(unit);
 
     }
 

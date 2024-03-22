@@ -7,31 +7,27 @@ use super::structures::Cluster;
 // DISCLAIMER
 // i have no idea how i cooked it : )
 // but it's working
-pub trait RenderBuilder{
-
+pub trait RenderBuilder {
     type Unit<'a>;
-    type Render<'a> : Render<Unit<'a> =  Self::Unit<'a>>;
+    type Render<'a>: Render<Unit<'a> = Self::Unit<'a>>;
 
     /// Creates Renderer.
     fn new() -> Self;
 
     /// Sets window arguments.
-    fn window(self, name : &str, width : u32, heigth : u32) -> Self;
+    fn window(self, name: &str, width: u32, heigth: u32) -> Self;
 
     /// Builds window
     fn build<'a>(self) -> Self::Render<'a>;
-
 }
 
-pub trait Render{
-
+pub trait Render {
     type Unit<'a>;
-    
+
     /// Creates cluster.
     fn create_cluster<'a>(&self) -> Cluster<Self::Unit<'a>>;
 
     /// Renders cluster.
     // moved here to keep Cluster backend agnostic.
-    fn render<'a>(&mut self, cluser : &Cluster<Self::Unit<'a>>);
-
+    fn render<'a>(&mut self, cluser: &Cluster<Self::Unit<'a>>);
 }

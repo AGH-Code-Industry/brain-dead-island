@@ -5,7 +5,10 @@ struct NaiveSearchProblem<'a, P: Searchable<'a>> {
     problem: &'a P,
 }
 
-impl<'a, P> Searchable<'a> for NaiveSearchProblem<'a, P> where P: 'a + Searchable<'a> {
+impl<'a, P> Searchable<'a> for NaiveSearchProblem<'a, P>
+where
+    P: 'a + Searchable<'a>,
+{
     type State = P::State;
     type Cost = P::Cost;
 
@@ -31,20 +34,19 @@ impl<'a, P> Searchable<'a> for NaiveSearchProblem<'a, P> where P: 'a + Searchabl
 }
 
 impl<'a, P> LowerBoundable<'a> for NaiveSearchProblem<'a, P>
-    where
-        P: Searchable<'a> + 'a{
+where
+    P: Searchable<'a> + 'a,
+{
     fn lower_bound(&self, _: &Self::State) -> Self::Cost {
         self.problem.get_zero_cost()
     }
 }
 
 impl<'a, P> NaiveSearchProblem<'a, P>
-    where
-        P: Searchable<'a> + 'a
+where
+    P: Searchable<'a> + 'a,
 {
     pub fn new(problem: &'a P) -> NaiveSearchProblem<'a, P> {
-        NaiveSearchProblem {
-            problem,
-        }
+        NaiveSearchProblem { problem }
     }
 }

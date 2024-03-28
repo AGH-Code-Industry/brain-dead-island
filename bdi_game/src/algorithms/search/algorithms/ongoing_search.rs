@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
+
 use priority_queue::PriorityQueue;
+
 use crate::algorithms::search::searchable::Searchable;
 
 pub struct NodeDistance<'a, P: Searchable<'a>> {
@@ -20,19 +22,20 @@ pub struct OngoingSearch<'a, P: Searchable<'a>> {
 }
 
 impl<'a, P: Searchable<'a>> OngoingSearch<'a, P>
-    where
-        P: Searchable<'a> + 'a
+where
+    P: Searchable<'a> + 'a,
 {
     pub fn new(problem: &'a P) -> OngoingSearch<'a, P> {
         let mut distances = HashMap::new();
         let mut priority_queue = PriorityQueue::new();
         let was_visited = HashSet::new();
 
-        distances.insert(problem.get_start(),
-                         NodeDistance {
-                             previous: None,
-                             cost: problem.get_zero_cost(),
-                         }
+        distances.insert(
+            problem.get_start(),
+            NodeDistance {
+                previous: None,
+                cost: problem.get_zero_cost(),
+            },
         );
 
         priority_queue.push(problem.get_start(), problem.get_zero_cost());
@@ -49,10 +52,14 @@ impl<'a, P: Searchable<'a>> OngoingSearch<'a, P>
         self.distances.get(state)
     }
 
-    pub fn relax_neighbours(&mut self, state: &'a P::State,
-                            heuristic_function: &impl Fn(&P::State) -> P::Cost) {
+    pub fn relax_neighbours(
+        &mut self,
+        state: &'a P::State,
+        heuristic_function: &impl Fn(&P::State) -> P::Cost,
+    ) {
         let neighbours = self.problem.get_neighbors(state);
-        let current_cost_info = self.get_node_distance(state)
+        let current_cost_info = self
+            .get_node_distance(state)
             .expect("State not found in distances");
 
         let current_cost = current_cost_info.cost;
@@ -79,7 +86,7 @@ impl<'a, P: Searchable<'a>> OngoingSearch<'a, P>
             } else {
                 self.distances.insert(neighbour, new_cost_info);
             }
-            
+
             let priority = new_cost + heuristic_function(neighbour);
             self.priority_queue.push(neighbour, priority);
         }
@@ -102,7 +109,7 @@ impl<'a, P: Searchable<'a>> OngoingSearch<'a, P>
                 Some(state)
             } else {
                 None
-            }
+            };
         }
     }
 
@@ -131,9 +138,6 @@ impl<'a, P: Searchable<'a>> OngoingSearch<'a, P>
 
         path.reverse();
 
-        Some(Path {
-            states: path,
-            cost,
-        })
+        Some(Path { states: path, cost })
     }
 }

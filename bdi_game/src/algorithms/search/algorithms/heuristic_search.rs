@@ -1,6 +1,6 @@
-use crate::algorithms::search::searchable::{Searchable};
 use crate::algorithms::search::algorithms::ongoing_search::{OngoingSearch, Path};
 use crate::algorithms::search::lower_boundable::LowerBoundable;
+use crate::algorithms::search::searchable::Searchable;
 
 pub struct SearchSettings<'a, T: Searchable<'a>> {
     pub max_cost: T::Cost,
@@ -13,13 +13,16 @@ pub enum SearchSolution<'a, P: Searchable<'a>> {
 }
 
 impl<'a, P> SearchSolution<'a, P>
-    where
-        P: Searchable<'a> + LowerBoundable<'a>
+where
+    P: Searchable<'a> + LowerBoundable<'a>,
 {
     /*
-    * If you don't want to use the heuristic function, you can use the NaiveSearchProblem struct
+     * If you don't want to use the heuristic function, you can use the NaiveSearchProblem struct
      */
-    pub fn new(problem: &'a mut P, search_settings: &SearchSettings<'a, P>) -> SearchSolution<'a, P> {
+    pub fn new(
+        problem: &'a mut P,
+        search_settings: &SearchSettings<'a, P>,
+    ) -> SearchSolution<'a, P> {
         let mut ongoing_search = OngoingSearch::new(problem);
 
         while !ongoing_search.is_done() {
@@ -32,13 +35,17 @@ impl<'a, P> SearchSolution<'a, P>
                         None => SearchSolution::NotFound,
                     };
                 }
-                
-                if search_settings.use_max_cost &&
-                    ongoing_search.get_node_distance(state).map(|x| x.cost)
-                    .unwrap_or(problem.get_zero_cost()) > search_settings.max_cost {
+
+                if search_settings.use_max_cost
+                    && ongoing_search
+                        .get_node_distance(state)
+                        .map(|x| x.cost)
+                        .unwrap_or(problem.get_zero_cost())
+                        > search_settings.max_cost
+                {
                     return SearchSolution::NotFound;
                 }
-                
+
                 ongoing_search.relax_neighbours(state, &|state| problem.lower_bound(state));
             }
         }

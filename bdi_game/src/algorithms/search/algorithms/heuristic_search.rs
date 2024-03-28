@@ -2,24 +2,24 @@ use crate::algorithms::search::searchable::{Searchable};
 use crate::algorithms::search::algorithms::ongoing_search::{OngoingSearch, Path};
 use crate::algorithms::search::lower_boundable::LowerBoundable;
 
-pub struct SearchSettings<T: Searchable> {
+pub struct SearchSettings<'a, T: Searchable<'a>> {
     pub max_cost: T::Cost,
     pub use_max_cost: bool,
 }
 
-pub enum SearchSolution<P: Searchable> {
-    Found(Path<P>),
+pub enum SearchSolution<'a, P: Searchable<'a>> {
+    Found(Path<'a, P>),
     NotFound,
 }
 
-impl<P> SearchSolution<P> 
+impl<'a, P> SearchSolution<'a, P>
     where
-        P: Searchable + LowerBoundable
+        P: Searchable<'a> + LowerBoundable<'a>
 {
     /*
     * If you don't want to use the heuristic function, you can use the NaiveSearchProblem struct
      */
-    pub fn new(problem: &mut P, search_settings: &SearchSettings<P>) -> SearchSolution<P> {
+    pub fn new(problem: &'a mut P, search_settings: &SearchSettings<'a, P>) -> SearchSolution<'a, P> {
         let mut ongoing_search = OngoingSearch::new(problem);
 
         while !ongoing_search.is_done() {

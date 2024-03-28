@@ -2,26 +2,26 @@ use std::collections::{HashMap, HashSet};
 use priority_queue::PriorityQueue;
 use crate::algorithms::search::searchable::Searchable;
 
-pub struct NodeDistance<'a, P: Searchable> {
+pub struct NodeDistance<'a, P: Searchable<'a>> {
     pub previous: Option<&'a P::State>,
     pub cost: P::Cost,
 }
 
-pub struct Path<P: Searchable> {
-    pub states: Vec<P::State>,
+pub struct Path<'a, P: Searchable<'a>> {
+    pub states: Vec<&'a P::State>,
     pub cost: P::Cost,
 }
 
-pub struct OngoingSearch<'a, P: Searchable> {
+pub struct OngoingSearch<'a, P: Searchable<'a>> {
     problem: &'a P,
     distances: HashMap<&'a P::State, NodeDistance<'a, P>>,
     priority_queue: PriorityQueue<&'a P::State, P::Cost>,
     was_visited: HashSet<&'a P::State>,
 }
 
-impl<'a, P: Searchable> OngoingSearch<'a, P>
+impl<'a, P: Searchable<'a>> OngoingSearch<'a, P>
     where
-        P: Searchable + 'a
+        P: Searchable<'a> + 'a
 {
     pub fn new(problem: &'a P) -> OngoingSearch<'a, P> {
         let mut distances = HashMap::new();
@@ -45,7 +45,7 @@ impl<'a, P: Searchable> OngoingSearch<'a, P>
         }
     }
 
-    pub fn get_node_distance(&self, state: &P::State) -> Option<&NodeDistance<P>> {
+    pub fn get_node_distance(&self, state: &'a P::State) -> Option<&NodeDistance<'a, P>> {
         self.distances.get(state)
     }
 
@@ -110,7 +110,7 @@ impl<'a, P: Searchable> OngoingSearch<'a, P>
         self.was_visited.contains(state)
     }
 
-    pub fn get_path(&self, state: &'a P::State) -> Option<Path<P>> {
+    pub fn get_path(&self, state: &'a P::State) -> Option<Path<'a, P>> {
         let mut path = vec![];
         let mut current_state = state;
         let mut cost = self.problem.get_zero_cost();
@@ -120,7 +120,7 @@ impl<'a, P: Searchable> OngoingSearch<'a, P>
         }
 
         while let Some(distance_info) = self.get_node_distance(current_state) {
-            path.push(current_state.clone());
+            path.push(current_state);
             cost += distance_info.cost;
             if let Some(previous_state) = &distance_info.previous {
                 current_state = previous_state;

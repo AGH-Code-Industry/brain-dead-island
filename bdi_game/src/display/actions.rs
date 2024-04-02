@@ -7,12 +7,12 @@ use std::collections::vec_deque::{Iter, IterMut};
 use std::collections::VecDeque;
 
 pub enum Action {
-    ClickGridCell(grid::GridPoint),
-    QuitGame(),
+    GridCellClicked(grid::GridPoint),
+    QuitGame,
 }
 
 impl Action {
-    pub fn check_click_grid_cell(x: i32, y: i32) -> Option<Self> {
+    pub fn from_left_click(x: i32, y: i32) -> Option<Self> {
         todo!()
     }
 }
@@ -23,11 +23,9 @@ pub struct ActionPump {
 }
 
 impl ActionPump {
-    pub fn new(sdl_context: Sdl) -> Self {
+    pub fn new(event_pump: EventPump) -> Self {
         Self {
-            sdl_pump: sdl_context
-                .event_pump()
-                .expect("Failed to initialize SDL Event Pump."),
+            sdl_pump: event_pump,
             actions: VecDeque::new(),
         }
     }
@@ -55,7 +53,9 @@ impl ActionPump {
 
     fn match_input(sdl_ev: Event) -> Option<Action> {
         match sdl_ev {
-            Event::KeyDown { keycode, .. } => Self::match_key_down(keycode.unwrap()),
+            Event::KeyDown { keycode, .. } if keycode.is_some() => {
+                Self::match_key_down(keycode.unwrap())
+            }
 
             Event::MouseButtonDown {
                 mouse_btn, x, y, ..
@@ -67,14 +67,14 @@ impl ActionPump {
 
     fn match_key_down(key: Keycode) -> Option<Action> {
         match key {
-            Keycode::Escape => Some(Action::QuitGame()),
+            Keycode::Escape => Some(Action::QuitGame),
             _ => None,
         }
     }
 
     fn match_button_down(button: MouseButton, x: i32, y: i32) -> Option<Action> {
         match button {
-            MouseButton::Left => Action::check_click_grid_cell(x, y),
+            MouseButton::Left => Action::from_left_click(x, y),
             _ => None,
         }
     }

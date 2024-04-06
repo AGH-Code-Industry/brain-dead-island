@@ -22,7 +22,7 @@ impl Default for SurvivorData {
             hunger: 100,
             thirst: 100,
             energy: 100,
-           // inventory: Inventory::new(),
+            // inventory: Inventory::new(),
         }
     }
 }

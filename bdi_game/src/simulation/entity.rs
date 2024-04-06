@@ -1,14 +1,15 @@
-use super::grid::GridPoint;
-use super::entity_type::SurvivorData;
-use super::entity_type::ZombieData;
+use super::entity_actions_queue::EntityActionsQueue;
+use super::entity_actions_queue::EntityCommand;
 use super::entity_state::EntityState;
 use super::entity_state::EntityStateHistory;
-use super::entity_actions_queue::EntityCommand;
-use super::entity_actions_queue::EntityActionsQueue;
+use super::entity_type::SurvivorData;
+use super::entity_type::ZombieData;
+use super::grid::GridPoint;
 pub type Survivor = Entity<SurvivorData>;
 pub type Zombie = Entity<ZombieData>;
 
-pub struct Entity<EntityType> //survivor or zombie
+pub struct Entity<EntityType>
+//survivor or zombie
 {
     pub id: u64,
     pub position: GridPoint,
@@ -54,6 +55,4 @@ impl<EntityType> Entity<EntityType> {
     pub fn set_current_state(&mut self, state: EntityState) {
         self.state = state;
     }
-
-    
 }

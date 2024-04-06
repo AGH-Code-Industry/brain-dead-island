@@ -2,7 +2,8 @@ use bdi_game::render::{self, traits::*};
 use sdl2;
 
 fn main() {
-    let mut rend = render::sdl::RenderBuilderSDL::new()
+    let mut sdl = sdl2::init().unwrap();
+    let mut rend = render::sdl::RenderBuilderSDL::new(&mut sdl)
         .window("game", 500, 500)
         .build();
 

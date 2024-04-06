@@ -23,7 +23,6 @@ pub struct RenderBuilderSDL {
     width: u32,
     heigth: u32,
     name: String,
-    context: sdl2::Sdl,
     video: sdl2::VideoSubsystem,
 }
 
@@ -37,20 +36,6 @@ pub struct RenderSDL {
 impl RenderBuilder for RenderBuilderSDL {
     type Unit<'a> = UnitSDL<'a> where Self : 'a;
     type Render<'a> = RenderSDL;
-
-    fn new() -> Self {
-        // No point in catching this errors
-        let context = sdl2::init().expect("Cannot initialize SDL library");
-        let video = context.video().expect("Cannot start video subsystem");
-
-        Self {
-            width: 0,
-            heigth: 0,
-            name: String::new(),
-            context,
-            video,
-        }
-    }
 
     fn build<'a>(self) -> Self::Render<'a> {
         let canvas = self
@@ -74,6 +59,20 @@ impl RenderBuilder for RenderBuilderSDL {
         self.width = width;
         self.heigth = heigth;
         self
+    }
+}
+
+impl RenderBuilderSDL{
+    pub fn new(context : &mut sdl2::Sdl) -> Self {
+        // No point in catching this errors
+        let video = context.video().expect("Cannot start video subsystem");
+
+        Self {
+            width: 0,
+            heigth: 0,
+            name: String::new(),
+            video,
+        }
     }
 }
 

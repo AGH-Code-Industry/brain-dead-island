@@ -19,7 +19,7 @@ impl<'a> UnitSDL<'a> {
 }
 
 /// Initializes video submodules, create window, handle canvas.
-pub struct RenderBuilderSDL {
+pub struct DisplayBuilderSDL {
     width: u32,
     heigth: u32,
     name: String,
@@ -27,17 +27,17 @@ pub struct RenderBuilderSDL {
 }
 
 /// Manages clusters and renders on screen.
-pub struct RenderSDL {
-    builder: RenderBuilderSDL,
+pub struct DisplaySDL {
+    builder: DisplayBuilderSDL,
     canvas: sdl2::render::WindowCanvas,
     tile: sdl2::rect::Rect,
 }
 
-impl RenderBuilder for RenderBuilderSDL {
+impl DisplayBuilder for DisplayBuilderSDL {
     type Unit<'a> = UnitSDL<'a> where Self : 'a;
-    type Render<'a> = RenderSDL;
+    type Display<'a> = DisplaySDL;
 
-    fn build<'a>(self) -> Self::Render<'a> {
+    fn build<'a>(self) -> Self::Display<'a> {
         let canvas = self
             .video
             .window(self.name.as_str(), self.width, self.heigth)
@@ -47,14 +47,14 @@ impl RenderBuilder for RenderBuilderSDL {
             .build()
             .expect("Cannot create canvas");
         let tile = sdl2::rect::Rect::new(0, 0, 100, 100);
-        RenderSDL {
+        DisplaySDL {
             builder: self,
             canvas,
             tile,
         }
     }
 
-    fn window(mut self, name: &str, width: u32, heigth: u32) -> Self {
+    fn set_display(mut self, name: &str, width: u32, heigth: u32) -> Self {
         self.name = name.to_string();
         self.width = width;
         self.heigth = heigth;
@@ -62,7 +62,7 @@ impl RenderBuilder for RenderBuilderSDL {
     }
 }
 
-impl RenderBuilderSDL{
+impl DisplayBuilderSDL{
     pub fn new(context : &mut sdl2::Sdl) -> Self {
         // No point in catching this errors
         let video = context.video().expect("Cannot start video subsystem");
@@ -76,7 +76,7 @@ impl RenderBuilderSDL{
     }
 }
 
-impl Render for RenderSDL {
+impl Display for DisplaySDL {
     type Unit<'a> = UnitSDL<'a> where Self : 'a;
 
     fn create_cluster<'a>(&self) -> super::structures::Cluster<Self::Unit<'a>> {

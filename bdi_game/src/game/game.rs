@@ -1,29 +1,37 @@
 use std::time::{Duration, Instant};
 
 use crate::{
-    display::game_display::GameDisplay,
+    display::sdl::*,
     input::Input,
     simulation::{simulation::Simulation, world_state::WorldState},
 };
 
 use super::logging::init_logging;
 
-pub struct Game<D: GameDisplay> {
-    display: D,
+pub struct Game {
+    display: DisplaySDL,
     simulation: Simulation,
     input: Input,
+    sdl : sdl2::Sdl,
+    last : Instant,
 }
 
-impl<D: GameDisplay> Game<D> {
-    pub fn init(display: D) -> Game<D> {
+impl Game {
+    pub fn init() -> Self {
         init_logging();
+        let mut sdl = sdl2::init().unwrap();
+        let mut display = DisplayBuilderSDL::new(&mut sdl)
+            .set_display("brain dead island", 500, 500)
+            .build();
 
         Game {
             display,
+            sdl,
             simulation: Simulation {
                 state: WorldState {},
             },
             input: Input {},
+            last : Instant::now(),
         }
     }
 
@@ -31,16 +39,15 @@ impl<D: GameDisplay> Game<D> {
         let fps = 60.0;
         let frame_time = Duration::from_millis((1000.0 / fps) as u64);
         loop {
-            let start = Instant::now();
+            let now = Instant::now();
+            let diff = now - self.last;
 
-            self.simulation.tick();
-            self.display.render(&self.simulation.state);
+            if diff >= frame_time {
+                self.simulation.tick();
+                //self.display.render(&self.simulation.state);
+            } 
+            self.last = Instant::now();
 
-            let end = Instant::now();
-            let diff = end - start;
-            if diff < frame_time {
-                ::std::thread::sleep(frame_time - diff);
-            }
         }
     }
 }

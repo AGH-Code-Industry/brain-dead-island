@@ -3,18 +3,19 @@ use super::structures::Cluster;
 /// Initializes video submodules, create window, handle canvas.
 /// Moves all data to the Renderer and destroys itself.
 // we can't make RenderBuilder and Render backend agnostic.
-pub trait RenderBuilder {
+// it's called display instead of window to not collide with sdl window structures
+pub trait DisplayBuilder {
     type Unit<'a>;
-    type Render<'a>: Render<Unit<'a> = Self::Unit<'a>>;
+    type Display<'a>: Display<Unit<'a> = Self::Unit<'a>>;
 
     /// Sets window arguments.
-    fn window(self, name: &str, width: u32, heigth: u32) -> Self;
+    fn set_display(self, name: &str, width: u32, heigth: u32) -> Self;
 
     /// Builds window
-    fn build<'a>(self) -> Self::Render<'a>;
+    fn build<'a>(self) -> Self::Display<'a>;
 }
 
-pub trait Render {
+pub trait Display {
     type Unit<'a>;
 
     /// Creates cluster.

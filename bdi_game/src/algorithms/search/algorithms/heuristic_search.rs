@@ -14,11 +14,8 @@ pub enum SearchSolution<'a, P: Searchable<'a>> {
 
 impl<'a, P> SearchSolution<'a, P>
 where
-    P: Searchable<'a> + LowerBoundable<'a>,
+    P: LowerBoundable<'a>,
 {
-    /*
-     * If you don't want to use the heuristic function, you can use the NaiveSearchProblem struct
-     */
     pub fn new(
         problem: &'a mut P,
         search_settings: &SearchSettings<'a, P>,
@@ -36,12 +33,13 @@ where
                     };
                 }
 
+                let current_cost = ongoing_search
+                    .get_node_distance(state)
+                    .map(|x| x.cost)
+                    .unwrap_or(problem.get_zero_cost());
+
                 if search_settings.use_max_cost
-                    && ongoing_search
-                        .get_node_distance(state)
-                        .map(|x| x.cost)
-                        .unwrap_or(problem.get_zero_cost())
-                        > search_settings.max_cost
+                    && current_cost > search_settings.max_cost
                 {
                     return SearchSolution::NotFound;
                 }

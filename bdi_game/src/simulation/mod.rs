@@ -2,3 +2,8 @@ pub mod grid;
 pub mod simulation;
 pub mod world_grid;
 pub mod world_state;
+pub mod entity_type;
+pub mod entity_state;
+pub mod entity_actions_queue;
+pub mod entity_state_machine;
+pub mod entity;

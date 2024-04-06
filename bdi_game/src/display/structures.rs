@@ -12,7 +12,9 @@ impl<T> Cluster<T> {
     }
 
     /// Adds units to the cluster.
-    pub fn bulk_add(&mut self, units: &[T]) {}
+    pub fn bulk_add(&mut self, units: Vec<T>) {
+        self.objects.extend(units)
+    }
 
     pub fn new() -> Self {
         Self {

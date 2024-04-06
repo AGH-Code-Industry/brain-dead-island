@@ -62,8 +62,8 @@ impl DisplayBuilder for DisplayBuilderSDL {
     }
 }
 
-impl DisplayBuilderSDL{
-    pub fn new(context : &mut sdl2::Sdl) -> Self {
+impl DisplayBuilderSDL {
+    pub fn new(context: &mut sdl2::Sdl) -> Self {
         // No point in catching this errors
         let video = context.video().expect("Cannot start video subsystem");
 

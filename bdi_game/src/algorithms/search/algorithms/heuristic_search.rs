@@ -38,9 +38,7 @@ where
                     .map(|x| x.cost)
                     .unwrap_or(problem.get_zero_cost());
 
-                if search_settings.use_max_cost
-                    && current_cost > search_settings.max_cost
-                {
+                if search_settings.use_max_cost && current_cost > search_settings.max_cost {
                     return SearchSolution::NotFound;
                 }
 

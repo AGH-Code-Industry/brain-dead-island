@@ -12,8 +12,8 @@ pub struct Game {
     display: DisplaySDL,
     simulation: Simulation,
     input: Input,
-    sdl : sdl2::Sdl,
-    last : Instant,
+    sdl: sdl2::Sdl,
+    last: Instant,
 }
 
 impl Game {
@@ -31,7 +31,7 @@ impl Game {
                 state: WorldState {},
             },
             input: Input {},
-            last : Instant::now(),
+            last: Instant::now(),
         }
     }
 
@@ -45,9 +45,8 @@ impl Game {
             if diff >= frame_time {
                 self.simulation.tick();
                 //self.display.render(&self.simulation.state);
-            } 
+            }
             self.last = Instant::now();
-
         }
     }
 }

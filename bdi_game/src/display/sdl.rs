@@ -1,5 +1,5 @@
 pub use super::traits::*;
-use sdl2::{self, gfx::primitives::DrawRenderer};
+use sdl2::{self, gfx::primitives::DrawRenderer, render::{SurfaceCanvas, WindowCanvas}, video::WindowContext, image::LoadTexture};
 
 const HEXAGON_H : i16 = 20;
 const HEXAGON_S : i16 = 50;
@@ -20,8 +20,8 @@ const HEXAGON_VERTICES_Y : [i16;6]  = [
     HEXAGON_S+(2*HEXAGON_H)
 ];
 
-pub enum UnitSDLFillType<'a>{
-    Texture(sdl2::render::Texture<'a>),
+pub enum UnitSDLFillType{
+    Texture(String),
     Color(sdl2::pixels::Color),
     None
 }
@@ -30,7 +30,7 @@ pub enum UnitSDLFillType<'a>{
 pub struct UnitSDL<'a> {
     pub position: &'a (i32, i32),
     pub size: u32,
-    pub filling : UnitSDLFillType<'a>,
+    pub filling : UnitSDLFillType,
 }
 
 impl<'a> UnitSDL<'a> {
@@ -55,6 +55,7 @@ pub struct DisplayBuilderSDL {
 pub struct DisplaySDL {
     builder: DisplayBuilderSDL,
     canvas: sdl2::render::WindowCanvas,
+    texture_handler : sdl2::render::TextureCreator<WindowContext>,
 }
 
 impl DisplayBuilder for DisplayBuilderSDL {
@@ -62,6 +63,11 @@ impl DisplayBuilder for DisplayBuilderSDL {
     type Display<'a> = DisplaySDL;
 
     fn build<'a>(self) -> Self::Display<'a> {
+
+        let _image_context = sdl2::image::init(
+            sdl2::image::InitFlag::PNG | sdl2::image::InitFlag::JPG)
+            .unwrap();
+
         let canvas = self
             .video
             .window(self.name.as_str(), self.width, self.heigth)
@@ -72,6 +78,7 @@ impl DisplayBuilder for DisplayBuilderSDL {
             .expect("Cannot create canvas");
         DisplaySDL {
             builder: self,
+            texture_handler: canvas.texture_creator(),
             canvas,
         }
     }
@@ -133,12 +140,15 @@ impl DisplaySDL {
                                          unit.position.1, 
                                          unit.size, 
                                          unit.size);
-        match unit.filling {
+        match &unit.filling {
             UnitSDLFillType::Color(x) =>{
-                self.canvas.set_draw_color(x);
+                self.canvas.set_draw_color(*x);
                 self.canvas.fill_rect(tile).unwrap();
             }
-            UnitSDLFillType::Texture(_) => {},
+            UnitSDLFillType::Texture(t) => {
+                let texture = self.texture_handler.load_texture(t.as_str()).unwrap();
+                self.canvas.copy(&texture, None, tile).unwrap();
+            },
             UnitSDLFillType::None => {},
         }
 

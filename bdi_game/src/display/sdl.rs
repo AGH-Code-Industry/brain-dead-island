@@ -1,5 +1,24 @@
 pub use super::traits::*;
-use sdl2;
+use sdl2::{self, gfx::primitives::DrawRenderer};
+
+const HEXAGON_H : i16 = 20;
+const HEXAGON_S : i16 = 50;
+const HEXAGON_VERTICES_X : [i16;6]  = [
+    HEXAGON_S-((1.73/2.)*HEXAGON_H as f32) as i16,
+    HEXAGON_S,
+    HEXAGON_S+HEXAGON_H,
+    HEXAGON_S+HEXAGON_H+((1.73/2.)*HEXAGON_H as f32) as i16,
+    HEXAGON_S+HEXAGON_H,
+    HEXAGON_S
+];
+const HEXAGON_VERTICES_Y : [i16;6]  = [
+    HEXAGON_S+HEXAGON_H,
+    HEXAGON_S,
+    HEXAGON_S,
+    HEXAGON_S+HEXAGON_H,
+    HEXAGON_S+(2*HEXAGON_H),
+    HEXAGON_S+(2*HEXAGON_H)
+];
 
 pub enum UnitSDLFillType<'a>{
     Texture(sdl2::render::Texture<'a>),
@@ -122,5 +141,17 @@ impl DisplaySDL {
         }
         self.canvas.fill_rect(tile).unwrap();
 
+    }
+
+    pub fn direct_draw_polygon(&mut self){
+
+        self.canvas.filled_polygon(&HEXAGON_VERTICES_X, 
+                                   &HEXAGON_VERTICES_Y,
+                                   sdl2::pixels::Color::RED).unwrap();
+
+    }
+
+    pub fn direct_flush(&mut self){
+       self.canvas.present(); 
     }
 }

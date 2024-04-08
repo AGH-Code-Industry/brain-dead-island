@@ -24,7 +24,9 @@ fn main() {
 
 
     loop {
-        rend.direct_draw_polygon();
+        for unit in &game_objs{
+            rend.direct_draw_polygon(&unit);
+        }
         rend.direct_flush();
         match event_pump.poll_event() {
             Some(sdl2::event::Event::Quit { .. }) => break,

@@ -1,4 +1,4 @@
-use bdi_game::display::{self, traits::*};
+use bdi_game::display::{self, traits::*, sdl::UnitSDLFillType};
 use sdl2;
 
 fn main() {
@@ -15,7 +15,7 @@ fn main() {
         .collect();
 
     game_objs.iter_mut().enumerate().for_each(|(i, x)| {
-        x.color = Some(sdl2::pixels::Color::RGB(
+        x.filling = UnitSDLFillType::Color(sdl2::pixels::Color::RGB(
             20 + 50 * i as u8,
             100 + 30 * i as u8,
             55 * i as u8,

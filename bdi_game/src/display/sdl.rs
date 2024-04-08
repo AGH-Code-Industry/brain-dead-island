@@ -29,7 +29,7 @@ pub enum UnitSDLFillType<'a>{
 /// SDL unit
 pub struct UnitSDL<'a> {
     pub position: &'a (i32, i32),
-    pub size: (u32,u32),
+    pub size: u32,
     pub filling : UnitSDLFillType<'a>,
 }
 
@@ -37,7 +37,7 @@ impl<'a> UnitSDL<'a> {
     pub fn new(position: &'a (i32, i32)) -> Self {
         Self {
             position,
-            size : (100,100),
+            size : 100,
             filling : UnitSDLFillType::None,
         }
     }
@@ -110,8 +110,8 @@ impl Display for DisplaySDL {
         for unit in &cluster.objects {
             let tile = sdl2::rect::Rect::new(unit.position.0, 
                                              unit.position.1, 
-                                             unit.size.0, 
-                                             unit.size.1);
+                                             unit.size, 
+                                             unit.size);
             match unit.filling {
                 UnitSDLFillType::Color(x) =>
                     self.canvas.set_draw_color(x),
@@ -128,30 +128,62 @@ impl Display for DisplaySDL {
 }
 
 impl DisplaySDL {
-    pub fn direct_draw(&mut self, unit : UnitSDL) {
+    pub fn direct_draw(&mut self, unit : &UnitSDL) {
         let tile = sdl2::rect::Rect::new(unit.position.0, 
                                          unit.position.1, 
-                                         unit.size.0, 
-                                         unit.size.1);
+                                         unit.size, 
+                                         unit.size);
         match unit.filling {
-            UnitSDLFillType::Color(x) =>
-                self.canvas.set_draw_color(x),
+            UnitSDLFillType::Color(x) =>{
+                self.canvas.set_draw_color(x);
+                self.canvas.fill_rect(tile).unwrap();
+            }
             UnitSDLFillType::Texture(_) => {},
             UnitSDLFillType::None => {},
         }
-        self.canvas.fill_rect(tile).unwrap();
 
     }
 
-    pub fn direct_draw_polygon(&mut self){
+    pub fn direct_draw_polygon(&mut self, unit : &UnitSDL){
 
-        self.canvas.filled_polygon(&HEXAGON_VERTICES_X, 
-                                   &HEXAGON_VERTICES_Y,
-                                   sdl2::pixels::Color::RED).unwrap();
+        let (x,y) = create_hexagon_vertices(unit);
+        match unit.filling {
+            UnitSDLFillType::Color(color) =>{
+                self.canvas.filled_polygon(&x,&y,color).unwrap();
+            }
+            UnitSDLFillType::Texture(_) => {},
+            UnitSDLFillType::None => {},
+        }
 
     }
 
     pub fn direct_flush(&mut self){
        self.canvas.present(); 
     }
+}
+
+fn create_hexagon_vertices(unit : &UnitSDL) -> ([i16;6],[i16;6]){
+    let heigth = (unit.size/2) as i16;
+    let x = unit.position.0 as i16;
+    let y = unit.position.1 as i16;
+    let approx_triangle_h = ((1.72/2.)*heigth as f32) as i16;
+    let hexagon_vertices_x : [i16;6]  = [
+          x-approx_triangle_h,
+          x,
+          x+heigth,
+          x+heigth+approx_triangle_h,
+          x+heigth,
+          x
+    ];
+    let hexagon_vertices_y : [i16;6]  = [
+          y+heigth,
+          y,
+          y,
+          y+heigth,
+          y+(2*heigth),
+          y+(2*heigth)
+    ];
+
+    (hexagon_vertices_x,hexagon_vertices_y)
+
 }

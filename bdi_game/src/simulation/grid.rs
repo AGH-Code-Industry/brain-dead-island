@@ -34,6 +34,11 @@ where
         &self.data[y][x]
     }
 
+    pub fn set_cell_data(&self, point: &GridPoint, data: T) {
+        let (x, y) = Self::get_cell_coord(point);
+        self.data[y][x] = GridCell { data };
+    }
+
     fn get_cell_coord_unchecked(point: &GridPoint) -> (i64, i64) {
         let x = (point.i + point.j / 2) as i64;
         let y = point.j as i64;

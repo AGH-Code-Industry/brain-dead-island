@@ -3,7 +3,8 @@ use std::time::{Duration, Instant};
 use crate::{
     display::game_display::GameDisplay,
     input::Input,
-    simulation::{simulation::Simulation, world_state::WorldState},
+    simulation::{simulation::Simulation, world_state::WorldState, world_grid::WorldGrid},
+    terrain_manager::map_loader::MapLoader,
 };
 
 use super::logging::init_logging;
@@ -18,10 +19,13 @@ impl<D: GameDisplay> Game<D> {
     pub fn init(display: D) -> Game<D> {
         init_logging();
 
+        let map = MapLoader::map_from_image("map");
+
         Game {
             display,
             simulation: Simulation {
                 state: WorldState {},
+                grid: WorldGrid::from_map(map),
             },
             input: Input {},
         }

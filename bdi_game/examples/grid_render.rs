@@ -24,7 +24,7 @@ impl GridSetup {
     fn calc_pos(shape: (u32, u32), cell_size: u32) -> Vec<(i32, i32)> {
         let width = shape.0;
         let height = shape.1;
-        let a = (cell_size / 2) as f64;
+        let a = cell_size as f64 / 3.0_f64.sqrt();
         let x_offset = 1.5 * a;
         let y_offset = 3.0_f64.sqrt() * a;
 
@@ -55,7 +55,7 @@ fn main() {
         .set_display("game", 1920, 1080)
         .build();
 
-    let setup = GridSetup::new((15, 10), 117);
+    let setup = GridSetup::new((10, 5), 100);
     let mut cells: Vec<display::sdl::UnitSDL> = setup
         .get_pos()
         .iter()

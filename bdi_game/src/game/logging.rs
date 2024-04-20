@@ -1,6 +1,5 @@
 use log::LevelFilter;
-use simplelog::{ColorChoice, Config, TermLogger, TerminalMode, CombinedLogger, WriteLogger};
-
+use simplelog::{ColorChoice, CombinedLogger, Config, TermLogger, TerminalMode, WriteLogger};
 
 pub(crate) fn init_logging() {
     // Create log directory if it doesn't exist
@@ -24,21 +23,15 @@ pub(crate) fn init_logging() {
         }
     };
 
-    match CombinedLogger::init(
-        vec![
-            TermLogger::new(
-                LevelFilter::Warn,
-                Config::default(),
-                TerminalMode::Mixed,
-                ColorChoice::Auto
-            ),
-            WriteLogger::new(
-                LevelFilter::Debug,
-                Config::default(),
-                log_file
-            ),
-        ]
-    ) {
+    match CombinedLogger::init(vec![
+        TermLogger::new(
+            LevelFilter::Warn,
+            Config::default(),
+            TerminalMode::Mixed,
+            ColorChoice::Auto,
+        ),
+        WriteLogger::new(LevelFilter::Debug, Config::default(), log_file),
+    ]) {
         Ok(_) => (),
         Err(e) => {
             eprintln!("Error while initializing logger: {}", e);

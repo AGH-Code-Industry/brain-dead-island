@@ -9,7 +9,7 @@ impl Sampler2D {
     pub fn new(height_map: GrayImage, side_len: usize) -> Sampler2D {
         Sampler2D {
             height_map,
-            side_len
+            side_len,
         }
     }
 

@@ -3,7 +3,7 @@ use std::time::{Duration, Instant};
 use crate::{
     display::game_display::GameDisplay,
     input::Input,
-    simulation::{simulation::Simulation, world_state::WorldState, world_grid::WorldGrid},
+    simulation::{simulation::Simulation, world_grid::WorldGrid, world_state::WorldState},
     terrain_manager::map_loader::MapLoader,
 };
 
@@ -25,7 +25,7 @@ impl<D: GameDisplay> Game<D> {
             display,
             simulation: Simulation {
                 state: WorldState {},
-                grid: WorldGrid { data: vec![] }
+                grid: WorldGrid { data: vec![] },
             },
             // grid: WorldGrid::from_height_map(map),
             input: Input {},

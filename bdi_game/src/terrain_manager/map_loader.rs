@@ -1,4 +1,4 @@
-use log::{debug, info, trace};
+use log::{debug, info};
 use image::GrayImage;
 use image::io::Reader as ImageReader;
 use crate::asset_manager::asset_manager::AssetManager;

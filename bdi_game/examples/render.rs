@@ -1,4 +1,4 @@
-use bdi_game::display::{self, traits::*, sdl::UnitSDLFillType};
+use bdi_game::display::{self, sdl::UnitSDLFillType, traits::*};
 use sdl2;
 
 fn main() {

@@ -1,4 +1,4 @@
-use bdi_game::display::{self, traits::*, sdl::UnitSDLFillType};
+use bdi_game::display::{self, sdl::UnitSDLFillType, traits::*};
 use sdl2::{self, image::LoadTexture};
 
 fn main() {
@@ -13,15 +13,13 @@ fn main() {
         .iter()
         .map(|x| display::sdl::UnitSDL::new(&x))
         .collect();
-    game_objs.iter_mut().enumerate().for_each(|(i, x)| {
-        x.filling = UnitSDLFillType::Texture(
-            "grass.png".to_string()
-        )
-    });
-
+    game_objs
+        .iter_mut()
+        .enumerate()
+        .for_each(|(i, x)| x.filling = UnitSDLFillType::Texture("grass.png".to_string()));
 
     loop {
-        for unit in &game_objs{
+        for unit in &game_objs {
             rend.direct_draw(&unit);
         }
         rend.direct_flush();

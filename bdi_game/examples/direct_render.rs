@@ -1,4 +1,4 @@
-use bdi_game::display::{self, traits::*, sdl::UnitSDLFillType};
+use bdi_game::display::{self, sdl::UnitSDLFillType, traits::*};
 use sdl2;
 
 fn main() {
@@ -22,9 +22,8 @@ fn main() {
         ))
     });
 
-
     loop {
-        for unit in &game_objs{
+        for unit in &game_objs {
             rend.direct_draw_polygon(&unit);
         }
         rend.direct_flush();

@@ -1,7 +1,7 @@
-use log::{debug, info};
-use image::GrayImage;
-use image::io::Reader as ImageReader;
 use crate::asset_manager::asset_manager::AssetManager;
+use image::io::Reader as ImageReader;
+use image::GrayImage;
+use log::{debug, info};
 
 pub struct MapLoader {
     map_asset_path: String,

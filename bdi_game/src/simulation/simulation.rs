@@ -1,5 +1,5 @@
-use super::world_state::WorldState;
 use super::world_grid::WorldGrid;
+use super::world_state::WorldState;
 
 pub struct Simulation {
     pub state: WorldState,

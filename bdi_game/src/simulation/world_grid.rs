@@ -1,6 +1,6 @@
-use image::GrayImage;
 use crate::simulation::grid::{Grid, GridPoint};
 use crate::terrain_manager::sampler::Sampler2D;
+use image::GrayImage;
 
 #[derive(Default, Clone)]
 pub(crate) struct WorldCellData {

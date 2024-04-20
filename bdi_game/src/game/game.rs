@@ -25,8 +25,9 @@ impl<D: GameDisplay> Game<D> {
             display,
             simulation: Simulation {
                 state: WorldState {},
-                grid: WorldGrid::from_map(map),
+                grid: WorldGrid { data: vec![] }
             },
+            // grid: WorldGrid::from_height_map(map),
             input: Input {},
         }
     }

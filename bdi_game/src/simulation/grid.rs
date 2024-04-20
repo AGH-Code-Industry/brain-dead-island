@@ -3,7 +3,7 @@ pub struct Grid<T>
 where
     T: Default + Clone,
 {
-    data: Vec<Vec<GridCell<T>>>,
+    pub(crate) data: Vec<Vec<GridCell<T>>>,
 }
 
 impl<T> Grid<T>
@@ -34,7 +34,7 @@ where
         &self.data[y][x]
     }
 
-    pub fn set_cell_data(&self, point: &GridPoint, data: T) {
+    pub fn set_cell_data(&mut self, point: &GridPoint, data: T) {
         let (x, y) = Self::get_cell_coord(point);
         self.data[y][x] = GridCell { data };
     }

@@ -58,5 +58,8 @@ jobs:
           restore-keys: ${{ runner.os }}-cargo-${{ env.cache-name }}-
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libsdl2-gfx-dev gcc
       - run: if ls ~/.cargo/bin/ | grep -q "^cargo-tarpaulin" ; then echo "cargo-tarpaulin is already installed"; else cargo install cargo-tarpaulin; fi
       - run: cargo tarpaulin --ignore-tests

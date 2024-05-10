@@ -3,8 +3,7 @@ use super::entity_actions_queue::EntityCommand;
 use super::entity_state::EntityState;
 use super::grid::GridPoint;
 
-pub struct Entity
-{
+pub struct Entity {
     pub position: GridPoint,
     pub actions: EntityActionsQueue,
     pub state: EntityState,

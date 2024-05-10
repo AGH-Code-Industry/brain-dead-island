@@ -1,7 +1,7 @@
+pub mod terrain_manager;
 pub mod algorithms;
-mod asset_manager;
 pub mod display;
 pub mod game;
-mod input;
+mod asset_manager;
 mod simulation;
-pub mod terrain_manager;
+mod input;

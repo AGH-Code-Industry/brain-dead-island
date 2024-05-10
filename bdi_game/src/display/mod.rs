@@ -1,9 +1,3 @@
-//! Rendering pipeline for bdi.
-
-/// SDL2 implentation of the rendering pipeline.
-pub mod sdl;
-/// Rendering pipeline structures.
-/// Implementation agnostic.
-pub mod structures;
-/// Rendering pipeline traits.
-pub mod traits;
+pub mod actions;
+pub mod game_display;
+pub mod sdl_display;

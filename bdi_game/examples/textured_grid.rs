@@ -69,7 +69,10 @@ fn main() {
         .build()
         .expect("Failed to initialize renderer Canvas");
 
-    let res_manager = ResourceManager::new();
+    let texture_creator = renderer.texture_creator();
+
+    let mut res_manager = ResourceManager::new();
+    res_manager.load_textures(&texture_creator);
 
     let setup = GridSetup::new((15, 10), 100);
     let mut cells: Vec<Hexagon> = setup
@@ -78,12 +81,8 @@ fn main() {
         .map(|x| Hexagon::new(*x, setup.cell_size))
         .collect();
 
-    cells.iter_mut().enumerate().for_each(|(i, x)| {
-        x.filling = Filling::Color(sdl2::pixels::Color::RGB(
-            20 + 5 * (i % 3) as u8,
-            100 + 3 * (i % 3) as u8,
-            55 + 1 * (i % 3) as u8,
-        ));
+    cells.iter_mut().for_each(|x| {
+        x.filling = Filling::Texture(String::from("grass"));
     });
 
     loop {
@@ -91,6 +90,7 @@ fn main() {
             cell.render(&mut renderer, &res_manager);
         }
         renderer.present();
+        renderer.clear();
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } => unsafe {

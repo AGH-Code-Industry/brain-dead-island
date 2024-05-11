@@ -57,21 +57,18 @@ impl Hexagon {
             x_0 as i16,
             (x_0 - a * 3.0_f64.sqrt() / 2.0) as i16,
             (x_0 - a * 3.0_f64.sqrt() / 2.0) as i16,
-
         ];
         let hexagon_vertices_y: [i16; 6] = [
             (y_0 - a) as i16,
-            (y_0 - 0.5*a) as i16,
-            (y_0 + 0.5*a) as i16,
+            (y_0 - 0.5 * a) as i16,
+            (y_0 + 0.5 * a) as i16,
             (y_0 + a) as i16,
-            (y_0 + 0.5*a) as i16,
-            (y_0 - 0.5*a) as i16,
+            (y_0 + 0.5 * a) as i16,
+            (y_0 - 0.5 * a) as i16,
         ];
 
         (hexagon_vertices_x, hexagon_vertices_y)
     }
-    
-
 }
 
 impl Renderable for Hexagon {

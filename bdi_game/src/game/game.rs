@@ -2,6 +2,7 @@ use std::time::{Duration, Instant};
 
 use crate::{
     display::sdl::*,
+    display::traits::DisplayBuilder,
     input::Input,
     simulation::{simulation::Simulation, world_state::WorldState},
 };

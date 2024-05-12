@@ -16,7 +16,7 @@ impl WorldGrid {
         let mut offset: i32 = 0;
         let map_sampler = Sampler2D::new(height_map.clone(), side_len);
 
-        for r in 0.. 2 * side_len as i32 {
+        for r in 0..2 * side_len as i32 {
             for q in -offset..side_len as i32 - offset {
                 let elevation = 255 - map_sampler.sample_hexagonal_axial(q, r);
                 let point = GridPoint::new(q, r);

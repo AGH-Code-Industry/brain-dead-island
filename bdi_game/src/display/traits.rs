@@ -1,8 +1,8 @@
-use crate::simulation::world_state::WorldState;
 use crate::display::camera::Camera;
+use crate::display::sdl::RendererBuilderSDL;
+use crate::simulation::world_state::WorldState;
 use crate::util::vec2::Vec2;
 use sdl2::pixels::Color;
-use crate::display::sdl::RendererBuilderSDL;
 
 /**
  * RendererBuilder trait used for creating a new Renderer object.

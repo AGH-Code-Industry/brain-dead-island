@@ -1,8 +1,8 @@
-use log::info;
 use crate::display::camera::Camera;
-use crate::display::sdl::{Renderer};
+use crate::display::sdl::Renderer;
 use crate::display::traits::RenderableObject;
 use crate::util::vec2::Vec2;
+use log::info;
 use sdl2::pixels::Color;
 
 pub struct GridHexagon {
@@ -12,7 +12,6 @@ pub struct GridHexagon {
 }
 
 impl RenderableObject for GridHexagon {
-
     fn render(&self, camera: &Camera, renderer: &mut dyn Renderer) {
         let mut vertices = Vec::new();
         for i in 0..6 {

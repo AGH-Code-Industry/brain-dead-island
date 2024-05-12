@@ -1,12 +1,11 @@
-use sdl2::pixels::Color;
 use crate::display::camera::Camera;
+use crate::display::renderable_objects::grid_hexagon::GridHexagon;
+use crate::display::sdl::{RendererBuilderSDL, RendererSDL};
 use crate::display::traits::{GameDisplay, RenderableObject, Renderer, RendererBuilder};
 use crate::simulation::grid::GridPoint;
 use crate::simulation::world_state::WorldState;
-use crate::display::renderable_objects::grid_hexagon::GridHexagon;
-use crate::display::sdl::{RendererBuilderSDL, RendererSDL};
 use crate::util::vec2::Vec2;
-
+use sdl2::pixels::Color;
 
 pub struct NullDisplay {}
 pub struct NullRenderer {}
@@ -66,7 +65,6 @@ impl GameDisplay for SdlDisplay {
     type RendererBuilder = RendererBuilderSDL;
 
     fn render(&mut self, state: &WorldState, camera: &Camera, renderer: &mut Self::Renderer) {
-
         let mut offset: i32 = 0;
         let mut hexagon_vertices: Vec<GridHexagon> = Vec::new();
 

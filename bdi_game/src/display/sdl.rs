@@ -3,7 +3,6 @@ use crate::util::vec2::Vec2;
 use sdl2::pixels::Color;
 use sdl2::{self, gfx::primitives::DrawRenderer, video::WindowContext};
 
-
 #[derive(Clone)]
 pub struct RendererBuilderSDL {
     width: u32,

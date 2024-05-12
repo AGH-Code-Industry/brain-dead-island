@@ -1,13 +1,13 @@
-use crate::simulation::{simulation::Simulation, world_grid::WorldGrid, world_state::WorldState};
-use crate::terrain_manager::map_loader::MapLoader;
+use crate::display::camera::Camera;
 use crate::display::sdl::RendererBuilder;
 use crate::display::traits::GameDisplay;
-use crate::display::camera::Camera;
 use crate::input::Input;
+use crate::simulation::{simulation::Simulation, world_grid::WorldGrid, world_state::WorldState};
+use crate::terrain_manager::map_loader::MapLoader;
 
 use super::logging::init_logging;
-use std::time::{Duration, Instant};
 use crate::util::vec2::Vec2;
+use std::time::{Duration, Instant};
 
 pub struct Game<D: GameDisplay> {
     display: D,
@@ -16,7 +16,6 @@ pub struct Game<D: GameDisplay> {
 }
 
 impl<D: GameDisplay> Game<D> {
-
     pub fn init(display: D) -> Game<D> {
         init_logging();
 
@@ -26,7 +25,9 @@ impl<D: GameDisplay> Game<D> {
         Game {
             display,
             simulation: Simulation {
-                state: WorldState { world_grid: WorldGrid::from_height_map(map, side_len) },
+                state: WorldState {
+                    world_grid: WorldGrid::from_height_map(map, side_len),
+                },
             },
             input: Input {},
         }
@@ -46,7 +47,8 @@ impl<D: GameDisplay> Game<D> {
             let start = Instant::now();
 
             self.simulation.tick();
-            self.display.render(&self.simulation.state, &camera, &mut renderer);
+            self.display
+                .render(&self.simulation.state, &camera, &mut renderer);
 
             let end = Instant::now();
             let diff = end - start;

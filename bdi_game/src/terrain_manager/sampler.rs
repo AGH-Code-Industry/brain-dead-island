@@ -1,5 +1,5 @@
-use std::cmp::{max, min};
 use image::GrayImage;
+use std::cmp::{max, min};
 
 pub struct Sampler2D {
     height_map: GrayImage,

@@ -1,36 +1,13 @@
+use crate::display::renderable::{Filling, Renderable};
 use sdl2::gfx::primitives::DrawRenderer;
 use sdl2::rect::{Point, Rect};
+use sdl2::pixels::Color;
 
 use super::resource_manager::ResourceManager;
 
-const HEXAGON_H: i16 = 20;
-const HEXAGON_S: i16 = 50;
-const HEXAGON_VERTICES_X: [i16; 6] = [
-    HEXAGON_S - ((1.73 / 2.) * HEXAGON_H as f32) as i16,
-    HEXAGON_S,
-    HEXAGON_S + HEXAGON_H,
-    HEXAGON_S + HEXAGON_H + ((1.73 / 2.) * HEXAGON_H as f32) as i16,
-    HEXAGON_S + HEXAGON_H,
-    HEXAGON_S,
-];
-const HEXAGON_VERTICES_Y: [i16; 6] = [
-    HEXAGON_S + HEXAGON_H,
-    HEXAGON_S,
-    HEXAGON_S,
-    HEXAGON_S + HEXAGON_H,
-    HEXAGON_S + (2 * HEXAGON_H),
-    HEXAGON_S + (2 * HEXAGON_H),
-];
-
-pub enum Filling {
-    Texture(String),
-    Color(sdl2::pixels::Color),
-    None,
-}
-
 pub struct Hexagon {
-    pub position: (i32, i32),
-    pub vertices: ([i16; 6], [i16; 6]),
+    position: (i32, i32),
+    vertices: ([i16; 6], [i16; 6]),
     pub size: u32,
     pub filling: Filling,
 }
@@ -73,15 +50,18 @@ impl Hexagon {
 
 impl Renderable for Hexagon {
     fn render(
-        &self,
+        &mut self,
         renderer: &mut sdl2::render::Canvas<sdl2::video::Window>,
         res_manager: &ResourceManager,
     ) -> () {
         match &self.filling {
             Filling::None => (),
-            Filling::Color(color) => renderer
-                .filled_polygon(&self.vertices.0, &self.vertices.1, *color)
-                .unwrap(),
+            Filling::Color(color) => {
+                    renderer
+                    .filled_polygon(&self.vertices.0, &self.vertices.1, *color)
+                    .unwrap();
+
+            },
             Filling::Texture(name) => {
                 let a = self.size;
                 let h = a as f64 / 3.0_f64.sqrt();
@@ -124,12 +104,4 @@ impl Renderable for Hexagon {
             }
         };
     }
-}
-
-pub trait Renderable {
-    fn render(
-        &self,
-        renderer: &mut sdl2::render::Canvas<sdl2::video::Window>,
-        res_manager: &ResourceManager,
-    ) -> ();
 }

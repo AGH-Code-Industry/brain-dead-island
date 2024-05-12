@@ -1,5 +1,6 @@
 use bdi_game::display::{
-    rendering::{Filling, Hexagon, Renderable},
+    hexagon::Hexagon,
+    renderable::{Filling, Renderable},
     resource_manager::ResourceManager,
 };
 use sdl2::event::Event;
@@ -31,6 +32,7 @@ impl GridSetup {
         let a = cell_size as f64 / 3.0_f64.sqrt();
         let x_offset = 3.0_f64.sqrt() * a;
         let y_offset = 1.5 * a;
+        let padding: f64 = 3.0;
 
         let mut cell_pos: Vec<(i32, i32)> = Vec::new();
         let starting_pos = (100.0, 100.0);
@@ -39,11 +41,11 @@ impl GridSetup {
         for i in 0..height {
             for j in 0..width {
                 cell_pos.push((current_pos.0.round() as i32, current_pos.1.round() as i32));
-                current_pos.0 += x_offset;
+                current_pos.0 += x_offset + padding;
             }
-            current_pos.1 += y_offset;
+            current_pos.1 += y_offset + padding;
             match i % 2 {
-                0 => current_pos.0 = starting_pos.0 + x_offset / 2.0,
+                0 => current_pos.0 = starting_pos.0 + (x_offset + padding) / 2.0,
                 1 => current_pos.0 = starting_pos.0,
                 _ => (),
             };
@@ -86,7 +88,7 @@ fn main() {
     });
 
     loop {
-        for cell in &cells {
+        for cell in &mut cells {
             cell.render(&mut renderer, &res_manager);
         }
         renderer.present();

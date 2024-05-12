@@ -1,8 +1,8 @@
+use sdl2::render::Canvas;
+use sdl2::video::Window;
 use std::time::{Duration, Instant};
 
 use crate::{
-    display::sdl::*,
-    display::traits::DisplayBuilder,
     input::Input,
     simulation::{simulation::Simulation, world_state::WorldState},
 };
@@ -10,7 +10,7 @@ use crate::{
 use super::logging::init_logging;
 
 pub struct Game {
-    display: DisplaySDL,
+    display: Canvas<Window>,
     simulation: Simulation,
     input: Input,
     sdl: sdl2::Sdl,
@@ -21,9 +21,19 @@ impl Game {
     pub fn init() -> Self {
         init_logging();
         let mut sdl = sdl2::init().unwrap();
-        let mut display = DisplayBuilderSDL::new(&mut sdl)
-            .set_display("brain dead island", 500, 500)
-            .build();
+
+        let mut window = sdl
+            .video()
+            .unwrap()
+            .window("Brain dead island", 500, 500)
+            .position_centered()
+            .build()
+            .unwrap();
+
+        let mut display = window
+            .into_canvas()
+            .build()
+            .expect("Failed to initialize renderer Canvas");
 
         Game {
             display,

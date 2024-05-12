@@ -1,8 +1,9 @@
 use bdi_game::display::{
-    rendering::{Filling, Hexagon, Renderable},
+    hexagon::Hexagon,
+    renderable::{Filling, Renderable},
     resource_manager::ResourceManager,
 };
-use sdl2::{event::Event, sys::SDL_Quit};
+use sdl2::{event::Event, sys::SDL_Quit, pixels::Color};
 
 fn main() {
     let sdl = sdl2::init().unwrap();
@@ -26,7 +27,7 @@ fn main() {
     res_manager.load_textures(&texture_creator);
 
     let mut hexagon = Hexagon::new((500, 100), 100);
-    hexagon.filling = Filling::Texture(String::from("grass"));
+    hexagon.filling = Filling::Color(Color::RGB(0, 102, 0));
 
     hexagon.render(&mut renderer, &res_manager);
     renderer.present();
@@ -36,6 +37,7 @@ fn main() {
             match event {
                 Event::Quit { .. } => unsafe {
                     SDL_Quit();
+                    std::process::exit(0);
                 },
                 _ => (),
             }

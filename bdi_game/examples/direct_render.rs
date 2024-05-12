@@ -4,7 +4,7 @@ use sdl2;
 fn main() {
     let mut sdl = sdl2::init().unwrap();
     let mut event_pump = sdl.event_pump().unwrap();
-    let mut rend = display::sdl::DisplayBuilderSDL::new(&mut sdl)
+    let mut rend = display::sdl::RendererBuilderSDL::new(&mut sdl)
         .set_display("game", 500, 500)
         .build();
 

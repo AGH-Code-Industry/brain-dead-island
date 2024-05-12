@@ -1,13 +1,13 @@
-use std::time::{Duration, Instant};
-
-use crate::{
-    display::game_display::GameDisplay,
-    input::Input,
-    simulation::{simulation::Simulation, world_grid::WorldGrid, world_state::WorldState},
-    terrain_manager::map_loader::MapLoader,
-};
+use crate::simulation::{simulation::Simulation, world_grid::WorldGrid, world_state::WorldState};
+use crate::terrain_manager::map_loader::MapLoader;
+use crate::display::sdl::RendererBuilder;
+use crate::display::traits::GameDisplay;
+use crate::display::camera::Camera;
+use crate::input::Input;
 
 use super::logging::init_logging;
+use std::time::{Duration, Instant};
+use crate::util::vec2::Vec2;
 
 pub struct Game<D: GameDisplay> {
     display: D,
@@ -16,18 +16,18 @@ pub struct Game<D: GameDisplay> {
 }
 
 impl<D: GameDisplay> Game<D> {
+
     pub fn init(display: D) -> Game<D> {
         init_logging();
 
-        let map = MapLoader::map_from_image("map");
+        let side_len = 40;
+        let map = MapLoader::map_from_image("perlin");
 
         Game {
             display,
             simulation: Simulation {
-                state: WorldState {},
-                grid: WorldGrid { data: vec![] },
+                state: WorldState { world_grid: WorldGrid::from_height_map(map, side_len) },
             },
-            // grid: WorldGrid::from_height_map(map),
             input: Input {},
         }
     }
@@ -35,11 +35,18 @@ impl<D: GameDisplay> Game<D> {
     pub fn run(&mut self) {
         let fps = 60.0;
         let frame_time = Duration::from_millis((1000.0 / fps) as u64);
+        let mut camera = Camera::new(16.0 / 9.0, 10.0);
+        camera.set_position(Vec2::new(50.0, 50.0));
+
+        let mut binding = self.display.create_renderer_builder();
+        let mut renderer_builder = binding.set_display("Map Rendering", 1000, 800);
+        let mut renderer = self.display.create_renderer(&mut renderer_builder);
+
         loop {
             let start = Instant::now();
 
             self.simulation.tick();
-            self.display.render(&self.simulation.state);
+            self.display.render(&self.simulation.state, &camera, &mut renderer);
 
             let end = Instant::now();
             let diff = end - start;

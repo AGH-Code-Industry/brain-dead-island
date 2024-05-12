@@ -5,3 +5,4 @@ pub mod game;
 mod input;
 mod simulation;
 pub mod terrain_manager;
+mod util;

@@ -1,3 +1,4 @@
+use std::cmp::{max, min};
 use image::GrayImage;
 
 pub struct Sampler2D {
@@ -22,14 +23,14 @@ impl Sampler2D {
         let offset_r_x = scale * 0.5 * r as f32;
         let offset_r_y = scale * 3.0f32.sqrt() / 2.0 * r as f32;
 
-        let x = offset_q_x + offset_r_x;
-        let y = offset_q_y + offset_r_y;
+        let x = (offset_q_x + offset_r_x) * 1.5;
+        let y = (offset_q_y + offset_r_y) / 2.0;
 
         // Linear interpolation
-        let x0 = x.floor() as u32;
-        let x1 = x.ceil() as u32;
-        let y0 = y.floor() as u32;
-        let y1 = y.ceil() as u32;
+        let x0 = max(min(x.floor() as u32, self.height_map.width() - 1), 0);
+        let x1 = max(min(x.ceil() as u32, self.height_map.width() - 1), 0);
+        let y0 = max(min(y.floor() as u32, self.height_map.height() - 1), 0);
+        let y1 = max(min(y.ceil() as u32, self.height_map.height() - 1), 0);
 
         let x0y0 = self.height_map.get_pixel(x0, y0)[0] as f32;
         let x1y0 = self.height_map.get_pixel(x1, y0)[0] as f32;

@@ -1,3 +1,5 @@
+use log::info;
+
 /// Generic hexagonal rectangle grid representation
 pub struct Grid<T>
 where
@@ -11,10 +13,19 @@ where
     T: Default + Clone,
 {
     pub fn new(side_len: usize) -> Grid<T> {
-        let mut data = Vec::with_capacity(side_len);
+        let mut data = Vec::with_capacity(side_len * 2);
         let mut row: Vec<GridCell<T>> = Vec::with_capacity(side_len);
-        row.fill(GridCell { data: T::default() });
-        data.fill(row);
+
+        for _ in 0..side_len {
+            row.push(GridCell { data: T::default() });
+        }
+
+        for _ in 0..side_len * 2 {
+            data.push(row.clone());
+        }
+
+        info!("Grid created with side length: {}", side_len);
+        info!("Row len: {:?}", row.len());
         Grid { data }
     }
 
@@ -40,7 +51,7 @@ where
     }
 
     fn get_cell_coord_unchecked(point: &GridPoint) -> (i64, i64) {
-        let x = (point.i + point.j / 2) as i64;
+        let x = (point.i + (point.j + 1) / 2) as i64;
         let y = point.j as i64;
         (x, y)
     }
@@ -51,6 +62,10 @@ where
             panic!("({}, {}) is not a valid grid coordinate", point.i, point.j)
         }
         (x as usize, y as usize)
+    }
+
+    pub(crate) fn get_side_len(&self) -> usize {
+        self.data[0].len()
     }
 }
 
@@ -73,5 +88,5 @@ pub struct GridCell<T>
 where
     T: Clone,
 {
-    data: T,
+    pub(crate) data: T,
 }

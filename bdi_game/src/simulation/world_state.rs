@@ -1,4 +1,5 @@
-use serde::{Deserialize, Serialize};
+use crate::simulation::world_grid::WorldGrid;
 
-#[derive(Deserialize, Serialize)]
-pub struct WorldState {}
+pub struct WorldState {
+    pub world_grid: WorldGrid,
+}

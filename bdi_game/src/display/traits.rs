@@ -1,27 +1,30 @@
-use super::structures::Cluster;
+use crate::display::camera::Camera;
+use crate::simulation::world_state::WorldState;
+use crate::util::vec2::Vec2;
+use sdl2::pixels::Color;
 
-/// Initializes video submodules, create window, handle canvas.
-/// Moves all data to the Renderer and destroys itself.
-// we can't make RenderBuilder and Render backend agnostic.
-// it's called display instead of window to not collide with sdl window structures
-pub trait DisplayBuilder {
-    type Unit<'a>;
-    type Display<'a>: Display<Unit<'a> = Self::Unit<'a>>;
-
-    /// Sets window arguments.
-    fn set_display(self, name: &str, width: u32, heigth: u32) -> Self;
-
-    /// Builds window
-    fn build<'a>(self) -> Self::Display<'a>;
+/**
+ * Renderer trait used for rendering various objects on the screen.
+ * The Display trait is used by the RenderableObject trait to render objects on the screen.
+ */
+pub trait Renderer {
+    fn render_polygon(&mut self, vertices: &Vec<Vec2>, color: Color);
+    fn render_line(&mut self, start: Vec2, end: Vec2, color: Color);
+    fn render_tex(&mut self, pos: Vec2, tex: &str);
+    fn present(&mut self);
 }
 
-pub trait Display {
-    type Unit<'a>;
+/**
+ * GameDisplay trait used for rendering the game state on the screen based on WorldState.
+ */
+pub trait GameDisplay {
+    fn render(&mut self, state: &WorldState, camera: &Camera);
+}
 
-    /// Creates cluster.
-    fn create_cluster<'a>(&self) -> Cluster<Self::Unit<'a>>;
-
-    /// Renders cluster.
-    // moved here to keep Cluster backend agnostic.
-    fn render<'a>(&mut self, cluser: &Cluster<Self::Unit<'a>>);
+/**
+ * RenderableObject trait shared by all objects that are gonna be rendered on screen, Grid Hexagons, Textured Objects etc.
+ * Render function will be called on all Renderable object in GameDisplay::render() function.
+ */
+pub trait RenderableObject {
+    fn render<R: Renderer>(&self, camera: &Camera, display: &mut R);
 }

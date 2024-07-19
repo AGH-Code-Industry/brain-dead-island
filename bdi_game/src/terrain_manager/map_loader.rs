@@ -3,9 +3,7 @@ use image::io::Reader as ImageReader;
 use image::GrayImage;
 use log::{debug, info};
 
-pub struct MapLoader {
-    map_asset_path: String,
-}
+pub struct MapLoader {}
 
 impl MapLoader {
     pub fn map_from_image(map_name: &str) -> GrayImage {

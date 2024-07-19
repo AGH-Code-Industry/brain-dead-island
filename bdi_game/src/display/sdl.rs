@@ -1,193 +1,97 @@
-pub use super::traits::*;
-use sdl2::{
-    self,
-    gfx::primitives::DrawRenderer,
-    image::LoadTexture,
-    render::{SurfaceCanvas, WindowCanvas},
-    video::WindowContext,
-};
+pub use super::traits::Renderer;
+use crate::util::vec2::Vec2;
+use sdl2::pixels::Color;
+use sdl2::{self, gfx::primitives::DrawRenderer, video::WindowContext};
 
-const HEXAGON_H: i16 = 20;
-const HEXAGON_S: i16 = 50;
-const HEXAGON_VERTICES_X: [i16; 6] = [
-    HEXAGON_S - ((1.73 / 2.) * HEXAGON_H as f32) as i16,
-    HEXAGON_S,
-    HEXAGON_S + HEXAGON_H,
-    HEXAGON_S + HEXAGON_H + ((1.73 / 2.) * HEXAGON_H as f32) as i16,
-    HEXAGON_S + HEXAGON_H,
-    HEXAGON_S,
-];
-const HEXAGON_VERTICES_Y: [i16; 6] = [
-    HEXAGON_S + HEXAGON_H,
-    HEXAGON_S,
-    HEXAGON_S,
-    HEXAGON_S + HEXAGON_H,
-    HEXAGON_S + (2 * HEXAGON_H),
-    HEXAGON_S + (2 * HEXAGON_H),
-];
-
-pub enum UnitSDLFillType {
-    Texture(String),
-    Color(sdl2::pixels::Color),
-    None,
-}
-
-/// SDL unit
-pub struct UnitSDL<'a> {
-    pub position: &'a (i32, i32),
-    pub size: u32,
-    pub filling: UnitSDLFillType,
-}
-
-impl<'a> UnitSDL<'a> {
-    pub fn new(position: &'a (i32, i32)) -> Self {
-        Self {
-            position,
-            size: 100,
-            filling: UnitSDLFillType::None,
-        }
-    }
-}
-
-/// Initializes video submodules, create window, handle canvas.
-pub struct DisplayBuilderSDL {
+#[derive(Clone)]
+pub struct RendererBuilderSDL {
     width: u32,
-    heigth: u32,
+    height: u32,
     name: String,
     video: sdl2::VideoSubsystem,
 }
 
-/// Manages clusters and renders on screen.
-pub struct DisplaySDL {
-    builder: DisplayBuilderSDL,
-    canvas: sdl2::render::WindowCanvas,
-    texture_handler: sdl2::render::TextureCreator<WindowContext>,
-}
-
-impl DisplayBuilder for DisplayBuilderSDL {
-    type Unit<'a> = UnitSDL<'a> where Self : 'a;
-    type Display<'a> = DisplaySDL;
-
-    fn build<'a>(self) -> Self::Display<'a> {
-        let _image_context =
-            sdl2::image::init(sdl2::image::InitFlag::PNG | sdl2::image::InitFlag::JPG).unwrap();
-
-        let canvas = self
-            .video
-            .window(self.name.as_str(), self.width, self.heigth)
-            .build()
-            .expect("Cannot create window")
-            .into_canvas()
-            .build()
-            .expect("Cannot create canvas");
-        DisplaySDL {
-            builder: self,
-            texture_handler: canvas.texture_creator(),
-            canvas,
-        }
-    }
-
-    fn set_display(mut self, name: &str, width: u32, heigth: u32) -> Self {
-        self.name = name.to_string();
-        self.width = width;
-        self.heigth = heigth;
-        self
-    }
-}
-
-impl DisplayBuilderSDL {
-    pub fn new(context: &mut sdl2::Sdl) -> Self {
+impl RendererBuilderSDL {
+    pub fn new() -> Self {
         // No point in catching this errors
+        let mut context = match sdl2::init() {
+            Ok(sdl) => sdl,
+            Err(e) => panic!("Failed to initialize SDL: {}", e),
+        };
         let video = context.video().expect("Cannot start video subsystem");
 
         Self {
             width: 0,
-            heigth: 0,
+            height: 0,
             name: String::new(),
             video,
         }
     }
 }
 
-impl Display for DisplaySDL {
-    type Unit<'a> = UnitSDL<'a> where Self : 'a;
-
-    fn create_cluster<'a>(&self) -> super::structures::Cluster<Self::Unit<'a>> {
-        super::structures::Cluster::new()
+impl RendererBuilderSDL {
+    pub fn set_display(&mut self, name: &str, width: u32, height: u32) -> &mut Self {
+        self.name = name.to_string();
+        self.width = width;
+        self.height = height;
+        self
     }
 
-    fn render<'a>(&mut self, cluster: &super::structures::Cluster<Self::Unit<'a>>) {
-        self.canvas.set_draw_color(sdl2::pixels::Color::WHITE);
-        for unit in &cluster.objects {
-            let tile =
-                sdl2::rect::Rect::new(unit.position.0, unit.position.1, unit.size, unit.size);
-            match unit.filling {
-                UnitSDLFillType::Color(x) => self.canvas.set_draw_color(x),
-                UnitSDLFillType::Texture(_) => {}
-                UnitSDLFillType::None => {}
-            }
-            // We should CATCH this error.
-            // Add handling here.
-            self.canvas.fill_rect(tile).unwrap();
-        }
+    pub fn build(&mut self) -> RendererSDL {
+        let _image_context =
+            sdl2::image::init(sdl2::image::InitFlag::PNG | sdl2::image::InitFlag::JPG).unwrap();
 
-        self.canvas.present();
+        let canvas = self
+            .video
+            .window(self.name.as_str(), self.width, self.height)
+            .build()
+            .expect("Cannot create window")
+            .into_canvas()
+            .build()
+            .expect("Cannot create canvas");
+
+        RendererSDL {
+            builder: self.clone(),
+            texture_handler: canvas.texture_creator(),
+            canvas,
+        }
     }
 }
 
-impl DisplaySDL {
-    pub fn direct_draw(&mut self, unit: &UnitSDL) {
-        let tile = sdl2::rect::Rect::new(unit.position.0, unit.position.1, unit.size, unit.size);
-        match &unit.filling {
-            UnitSDLFillType::Color(x) => {
-                self.canvas.set_draw_color(*x);
-                self.canvas.fill_rect(tile).unwrap();
-            }
-            UnitSDLFillType::Texture(t) => {
-                let texture = self.texture_handler.load_texture(t.as_str()).unwrap(); // TODO: get read of loading texture each frame!
-                self.canvas.copy(&texture, None, tile).unwrap();
-            }
-            UnitSDLFillType::None => {}
-        }
-    }
-
-    pub fn direct_draw_polygon(&mut self, unit: &UnitSDL) {
-        let (x, y) = create_hexagon_vertices(unit);
-        match unit.filling {
-            UnitSDLFillType::Color(color) => {
-                self.canvas.filled_polygon(&x, &y, color).unwrap();
-            }
-            UnitSDLFillType::Texture(_) => {}
-            UnitSDLFillType::None => {}
-        }
-    }
-
-    pub fn direct_flush(&mut self) {
-        self.canvas.present();
-    }
+/**
+ * Renderer class for SDL2
+ */
+pub struct RendererSDL {
+    builder: RendererBuilderSDL,
+    canvas: sdl2::render::WindowCanvas,
+    texture_handler: sdl2::render::TextureCreator<WindowContext>,
 }
 
-fn create_hexagon_vertices(unit: &UnitSDL) -> ([i16; 6], [i16; 6]) {
-    let heigth = (unit.size / 2) as i16;
-    let x = unit.position.0 as i16;
-    let y = unit.position.1 as i16;
-    let approx_triangle_h = ((1.72 / 2.) * heigth as f32) as i16;
-    let hexagon_vertices_x: [i16; 6] = [
-        x - approx_triangle_h,
-        x,
-        x + heigth,
-        x + heigth + approx_triangle_h,
-        x + heigth,
-        x,
-    ];
-    let hexagon_vertices_y: [i16; 6] = [
-        y + heigth,
-        y,
-        y,
-        y + heigth,
-        y + (2 * heigth),
-        y + (2 * heigth),
-    ];
+impl Renderer for RendererSDL {
+    fn render_polygon(&mut self, vertices: &Vec<Vec2>, color: Color) {
+        let mut x = Vec::new();
+        let mut y = Vec::new();
+        for vertex in vertices {
+            x.push(vertex.x as i16);
+            y.push(vertex.y as i16);
+        }
+        self.canvas.filled_polygon(&x, &y, color).unwrap();
+    }
 
-    (hexagon_vertices_x, hexagon_vertices_y)
+    fn render_tex(&mut self, pos: Vec2, tex: &str) {
+        todo!()
+    }
+
+    fn render_line(&mut self, start: Vec2, end: Vec2, color: Color) {
+        self.canvas
+            .draw_line(
+                (start.x as i32, start.y as i32),
+                (end.x as i32, end.y as i32),
+            )
+            .unwrap();
+    }
+
+    fn present(&mut self) {
+        self.canvas.present();
+    }
 }

@@ -8,7 +8,7 @@ pub struct WorldCellData {
     // ...
 }
 
-pub(crate) type WorldGrid = Grid<WorldCellData>;
+pub type WorldGrid = Grid<WorldCellData>;
 
 impl WorldGrid {
     pub fn from_height_map(height_map: GrayImage, side_len: usize) -> WorldGrid {

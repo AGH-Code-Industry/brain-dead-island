@@ -5,7 +5,7 @@ pub struct Grid<T>
 where
     T: Default + Clone,
 {
-    pub(crate) data: Vec<Vec<GridCell<T>>>,
+    pub data: Vec<Vec<GridCell<T>>>,
 }
 
 impl<T> Grid<T>
@@ -64,7 +64,7 @@ where
         (x as usize, y as usize)
     }
 
-    pub(crate) fn get_side_len(&self) -> usize {
+    pub fn get_side_len(&self) -> usize {
         self.data[0].len()
     }
 }
@@ -88,5 +88,5 @@ pub struct GridCell<T>
 where
     T: Clone,
 {
-    pub(crate) data: T,
+    pub data: T,
 }

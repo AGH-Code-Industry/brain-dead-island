@@ -1,4 +1,4 @@
-pub use super::traits::{Renderer, RendererBuilder};
+pub use super::traits::Renderer;
 use crate::util::vec2::Vec2;
 use sdl2::pixels::Color;
 use sdl2::{self, gfx::primitives::DrawRenderer, video::WindowContext};
@@ -12,8 +12,12 @@ pub struct RendererBuilderSDL {
 }
 
 impl RendererBuilderSDL {
-    pub fn new(context: &mut sdl2::Sdl) -> Self {
+    pub fn new() -> Self {
         // No point in catching this errors
+        let mut context = match sdl2::init() {
+            Ok(sdl) => sdl,
+            Err(e) => panic!("Failed to initialize SDL: {}", e),
+        };
         let video = context.video().expect("Cannot start video subsystem");
 
         Self {
@@ -25,17 +29,15 @@ impl RendererBuilderSDL {
     }
 }
 
-impl RendererBuilder for RendererBuilderSDL {
-    type Renderer = RendererSDL;
-
-    fn set_display(&mut self, name: &str, width: u32, height: u32) -> &mut Self {
+impl RendererBuilderSDL {
+    pub fn set_display(&mut self, name: &str, width: u32, height: u32) -> &mut Self {
         self.name = name.to_string();
         self.width = width;
         self.height = height;
         self
     }
 
-    fn build(&mut self) -> RendererSDL {
+    pub fn build(&mut self) -> RendererSDL {
         let _image_context =
             sdl2::image::init(sdl2::image::InitFlag::PNG | sdl2::image::InitFlag::JPG).unwrap();
 

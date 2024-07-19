@@ -12,7 +12,7 @@ pub struct GridHexagon {
 }
 
 impl RenderableObject for GridHexagon {
-    fn render(&self, camera: &Camera, renderer: &mut dyn Renderer) {
+    fn render<R: Renderer>(&self, camera: &Camera, renderer: &mut R) {
         let mut vertices = Vec::new();
         for i in 0..6 {
             let angle = std::f32::consts::PI * (2.0 * i as f32) / 6.0;
